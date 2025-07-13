@@ -1,11 +1,15 @@
-# .gitignore
+# Python Virtual Environment
 venv/
+
+# Python Cache
 __pycache__/
 *.pyc
-*.pyo
-*.pyd
-.env
-.DS_Store
-resume-screener/venv/
-venv/ .
+
+# Django Specific
 db.sqlite3
+
+# Environment Variables
+.env
+
+# OS-specific files
+.DS_Store
