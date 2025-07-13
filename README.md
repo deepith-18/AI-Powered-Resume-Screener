@@ -1,82 +1,54 @@
 
+# AI-Powered Resume Screener
 
-#AI-Powered Resume Screener
-
-![alt text](https://img.shields.io/badge/Python-3.9%2B-blue.svg)
-
-
-![alt text](https://img.shields.io/badge/Django-4.2-blue.svg)
-
-
-![alt text](https://img.shields.io/badge/License-MIT-yellow.svg)
+[![Python Version](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://www.python.org/downloads/) [![Django Version](https://img.shields.io/badge/Django-4.2-blue.svg)](https://www.djangoproject.com/) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 An intelligent, modern web application designed to automate and streamline the initial stages of recruitment. This tool uses state-of-the-art AI models to rank candidate resumes against a job description, identify skill gaps, and filter out irrelevant documents, saving recruiters countless hours of manual work.
 
-(Note: You should replace the link above with a real screenshot of your application's dashboard!)
+![AI Resume Screener Dashboard](./path/to/your/screenshot.png)
+*(**Note**: You should replace the link above with a real screenshot of your application's dashboard!)*
 
-✨ Features
+## ✨ Features
 
-Semantic Ranking: Goes beyond simple keyword matching. It uses Sentence-BERT models to understand the contextual meaning of the job description and resumes, providing a far more accurate "match score".
+-   **Semantic Ranking:** Goes beyond simple keyword matching. It uses Sentence-BERT models to understand the contextual meaning of the job description and resumes, providing a far more accurate "match score".
+-   **Skill Gap Analysis:** Automatically extracts required skills from the job description and compares them against the skills found in each resume, instantly highlighting any missing qualifications.
+-   **Intelligent Document Classification:** Uses a zero-shot classification model to determine if an uploaded file is actually a resume, automatically skipping irrelevant documents like cover letters, certificates, or invoices.
+-   **Asynchronous Processing:** Leverages Celery and Redis to handle the computationally-intensive AI processing in the background. This means you can upload hundreds of resumes and the UI remains fast and responsive.
+-   **Interactive Dashboard:** A clean, modern interface to view ranked results. Features include:
+    -   Filtering candidates by minimum match score.
+    -   Filtering candidates by a specific skill.
+    -   A "shortlist" feature to flag promising candidates.
+-   **Export to Excel:** Easily export the details of your shortlisted candidates into a well-formatted `.xlsx` file for sharing or further analysis.
+-   **Modern UI/UX:** A sleek, dark-themed interface with an animated background powered by Vanta.js for a professional feel.
 
-Skill Gap Analysis: Automatically extracts required skills from the job description and compares them against the skills found in each resume, instantly highlighting any missing qualifications.
+## 🛠️ Tech Stack
 
-Intelligent Document Classification: Uses a zero-shot classification model to determine if an uploaded file is actually a resume, automatically skipping irrelevant documents like cover letters, certificates, or invoices.
+-   **Backend:** Django, Celery
+-   **AI / Machine Learning:**
+    -   `transformers` (Hugging Face) for Zero-Shot Classification
+    -   `sentence-transformers` for Semantic Similarity & Embeddings
+    -   `PyTorch` as the ML framework
+-   **Database:** SQLite3 (default, easily switchable)
+-   **Task Queue / Broker:** Redis
+-   **File Processing:** `PyMuPDF` (for robust PDF text extraction), `pandas` (for Excel export)
+-   **Frontend:** HTML, CSS, JavaScript, Vanta.js (for animated background)
 
-Asynchronous Processing: Leverages Celery and Redis to handle the computationally-intensive AI processing in the background. This means you can upload hundreds of resumes and the UI remains fast and responsive.
-
-Interactive Dashboard: A clean, modern interface to view ranked results. Features include:
-
-Filtering candidates by minimum match score.
-
-Filtering candidates by a specific skill.
-
-A "shortlist" feature to flag promising candidates.
-
-Export to Excel: Easily export the details of your shortlisted candidates into a well-formatted .xlsx file for sharing or further analysis.
-
-Modern UI/UX: A sleek, dark-themed interface with an animated background powered by Vanta.js for a professional feel.
-
-🛠️ Tech Stack
-
-Backend: Django, Celery
-
-AI / Machine Learning:
-
-transformers (Hugging Face) for Zero-Shot Classification
-
-sentence-transformers for Semantic Similarity & Embeddings
-
-PyTorch as the ML framework
-
-Database: SQLite3 (default, easily switchable)
-
-Task Queue / Broker: Redis
-
-File Processing: PyMuPDF (for robust PDF text extraction), Pandas (for Excel export)
-
-Frontend: HTML, CSS, JavaScript, Vanta.js (for animated background)
-
-🚀 Getting Started
+## 🚀 Getting Started
 
 Follow these instructions to get the project up and running on your local machine.
 
-1. Prerequisites
+### 1. Prerequisites
 
 Make sure you have the following installed:
+-   **Python 3.9 or higher**
+-   **Git** for cloning the repository
+-   **Redis**: The message broker for Celery.
+    -   [Download and Installation Guide for Redis](https://redis.io/docs/getting-started/installation/)
 
-Python 3.9 or higher
+### 2. Installation and Setup
 
-Git for cloning the repository
-
-Redis: The message broker for Celery.
-
-Download and Installation Guide for Redis
-
-2. Installation and Setup
-
-Step 1: Clone the Repository
-
-Generated bash
+**Step 1: Clone the Repository**
+```bash
 git clone https://github.com/your-username/screener-project.git
 cd screener-project
 
@@ -218,7 +190,7 @@ Click the star icon to "shortlist" a candidate.
 Export: Click the "Export Shortlisted to Excel" button to download a spreadsheet of your selected candidates.
 
 📁 Project Structure
-Generated code
+Generated text
 screener_project/
 ├── media/                  # Uploaded resume files are stored here
 ├── resumes/                # The main Django app
@@ -247,6 +219,7 @@ IGNORE_WHEN_COPYING_START
 content_copy
 download
 Use code with caution.
+Text
 IGNORE_WHEN_COPYING_END
 💡 Future Improvements
 
@@ -262,4 +235,11 @@ Dockerize the Application: Create Dockerfile and docker-compose.yml files to mak
 
 📄 License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the MIT License. See the LICENSE.md file for details.
+
+Generated code
+IGNORE_WHEN_COPYING_START
+content_copy
+download
+Use code with caution.
+IGNORE_WHEN_COPYING_END
