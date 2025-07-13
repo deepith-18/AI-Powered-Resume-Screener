@@ -1,6 +1,6 @@
 
 
-#AI-Powered Resume Screener#
+#AI-Powered Resume Screener
 
 ![alt text](https://img.shields.io/badge/Python-3.9%2B-blue.svg)
 
