@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Recruiter Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Add Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* (You can copy the dark theme CSS from your upload.html here) */
+        /* ... I've included a condensed version below ... */
+        body { font-family: 'Roboto', sans-serif; margin: 0; background-color: #121222; color: #f8f9fa; }
+        .dashboard-container { max-width: 1200px; margin: 40px auto; padding: 20px; }
+        h1, h2 { font-weight: 700; }
+        .filter-bar { background: #1e1e2f; padding: 20px; border-radius: 12px; margin-bottom: 30px; display: flex; gap: 20px; align-items: center; }
+        .filter-bar input { background-color: #121222; border: 1px solid #2a2a4a; color: #f8f9fa; padding: 10px; border-radius: 6px; }
+        .btn { background-color: #007BFF; color: white; padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; text-decoration: none; }
+        .btn-secondary { background-color: #6c757d; }
+        .btn-success { background-color: #28a745; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #2a2a4a; }
+        th { background-color: rgba(42, 42, 74, 0.5); }
+        .shortlisted { background-color: rgba(40, 167, 69, 0.1); }
+        .shortlist-btn { background: none; border: none; cursor: pointer; font-size: 1.5rem; }
+        .fa-star { color: #6c757d; }
+        .fa-star.active { color: #ffc107; }
+        .skill-tag { display: inline-block; background-color: #007BFF; padding: 2px 8px; margin: 2px; border-radius: 12px; font-size: 0.8em; }
+        .missing-skill-tag { background-color: #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <h1>Recruiter Dashboard</h1>
+
+        <!-- Filter and Export Bar -->
+        <div class="filter-bar">
+            <form method="GET" style="display: flex; gap: 20px; align-items: center;">
+                <input type="text" name="skill" placeholder="Filter by skill..." value="{{ request.GET.skill }}">
+                <input type="number" name="min_score" placeholder="Min score (e.g., 70)" value="{{ request.GET.min_score }}">
+                <button type="submit" class="btn">Filter</button>
+            </form>
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary" style="margin-left: auto;">Reset</a>
+            <a href="{% url 'export_excel' %}" class="btn btn-success"><i class="fas fa-file-excel"></i> Export Shortlisted</a>
+            <a href="{% url 'upload_resumes' %}" class="btn">Upload New Batch</a>
+        </div>
+
+        <!-- Results Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Shortlist</th>
+                    <th>Candidate</th>
+                    <th>Score</th>
+                    <th>Missing Skills</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                <tr class="{% if result.is_shortlisted %}shortlisted{% endif %}">
+                    <td>
+                        <form action="{% url 'shortlist_candidate' result.id %}" method="POST" style="margin: 0;">
+                            {% csrf_token %}
+                            <button type="submit" class="shortlist-btn" aria-label="{% if result.is_shortlisted %}Unshortlist{% else %}Shortlist{% endif %} candidate">
+                                <i class="fas fa-star {% if result.is_shortlisted %}active{% endif %}"></i>
+                            </button>
+                        </form>
+                    </td>
+                    <td>{{ result.filename }}</td>
+                    <td><strong>{{ result.score }}%</strong></td>
+                    <td>
+                        {% for skill in result.missing_skills|slice:":5" %}
+                            <span class="skill-tag missing-skill-tag">{{ skill }}</span>
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 40px;">No results found. Try adjusting your filters or <a href="{% url 'upload_resumes' %}">uploading a new batch</a>.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

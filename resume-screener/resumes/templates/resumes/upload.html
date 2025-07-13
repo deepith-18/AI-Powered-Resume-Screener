@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Screener</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- SINGLE, CONSOLIDATED DARK THEME STYLES --- */
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            margin: 0;
+            line-height: 1.6;
+        }
+        
+        #vanta-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .main-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px; 
+            margin: 60px auto; 
+            padding: 20px;
+        }
+
+        h1, h2 { 
+            color: #f8f9fa; /* Light text for dark background */
+            font-weight: 700;
+        }
+
+        .container { 
+            background: #1e1e2f; /* A slightly different dark blue from the background */
+            padding: 40px; 
+            border-radius: 12px; 
+            box-shadow: 0 5px 25px rgba(0,0,0,0.25); 
+            border: 1px solid #2a2a4a;
+        }
+        
+        form > label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #ced4da; /* Lighter label color */
+        }
+
+        textarea {
+            display: block;
+            width: 100%;
+            margin-bottom: 25px;
+            box-sizing: border-box;
+            background-color: #121222; /* Match Vanta background */
+            border: 1px solid #2a2a4a;
+            padding: 12px;
+            border-radius: 6px;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            font-family: 'Roboto', sans-serif;
+            font-size: 1rem;
+            color: #f8f9fa; /* Light text for contrast */
+        }
+        
+        textarea:focus {
+            border-color: #007bff;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        }
+        
+        /* Special styling for the file input to make it look good in dark mode */
+        input[type="file"] {
+            color: #ced4da;
+            margin-bottom: 25px;
+        }
+        input[type="file"]::file-selector-button {
+            font-weight: bold;
+            color: #007bff;
+            background-color: #2a2a4a;
+            border: 1px solid #007bff;
+            border-radius: 4px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        input[type="file"]::file-selector-button:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+
+        button { 
+            width: 100%;
+            background-color: #007BFF; 
+            color: white; 
+            padding: 12px 15px; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.2s ease-in-out;
+        }
+        button:hover { 
+            background-color: #0056b3; 
+        }
+
+        .results { 
+            margin-top: 40px; 
+        }
+
+        table { 
+            width: 100%; 
+            border-collapse: collapse;
+            background-color: transparent;
+            border-radius: 6px;
+            overflow: hidden; 
+        }
+        th, td { 
+            padding: 15px; 
+            text-align: left; 
+            border-bottom: 1px solid #2a2a4a;
+            color: #f8f9fa; /* Light text for contrast */
+        }
+        th { 
+            background-color: rgba(42, 42, 74, 0.5); /* Semi-transparent dark header */
+            font-weight: 500;
+        }
+        
+        /* This prevents a double border on the new skill gap row */
+        tr:last-child td {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="vanta-bg"></div>
+
+    <div class="main-content">
+        <div class="container">
+            <h1>AI-Powered Resume Screener</h1>
+            
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <label for="job_description">1. Paste Job Description:</label>
+                <textarea name="job_description" id="job_description" required></textarea>
+
+                <label for="resumes">2. Upload Resumes (PDFs only):</label>
+                <input type="file" name="resumes" id="resumes" multiple required>
+                
+                <button type="submit">Rank Resumes</button>
+            </form>
+
+            <!-- Section for Ranked Resumes -->
+            {% if ranked_resumes %}
+            <div class="results">
+                <h2>Screening Results</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Resume Filename</th>
+                            <th>Match Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for resume in ranked_resumes %}
+                        <tr>
+                            <td>{{ resume.filename }}</td>
+                            <td><strong>{{ resume.score }}</strong></td>
+                        </tr>
+                        <!-- NEW SECTION FOR SKILL GAP -->
+                        <tr>
+                            <td colspan="2" style="padding-top: 5px; padding-bottom: 15px;">
+                                {% if resume.missing_skills %}
+                                    <div style="font-size: 0.9em;">
+                                        <strong style="color: #ffc107;">Skill Gap:</strong>
+                                        {% for skill in resume.missing_skills %}
+                                            <span style="display: inline-block; background-color: #dc3545; color: white; padding: 2px 8px; margin: 2px; border-radius: 12px; font-size: 0.8em;">
+                                                {{ skill }}
+                                            </span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <div style="font-size: 0.9em;">
+                                        <strong style="color: #28a745;">Excellent Skill Match!</strong>
+                                    </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+
+            <!-- Section for Rejected/Skipped Files -->
+            {% if rejected_files %}
+            <div class="results" style="margin-top: 20px;">
+                <h2 style="color: #dc3545;">Skipped Files</h2>
+                <p style="font-size: 0.9em; color: #6c757d;">
+                    These files were not ranked because the AI did not identify them as resumes.
+                </p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Filename</th>
+                            <th>Reason for Skipping</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for file in rejected_files %}
+                        <tr>
+                            <td>{{ file.filename }}</td>
+                            <td>{{ file.reason }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+    <script>
+    VANTA.NET({
+      el: "#vanta-bg",
+      mouseControls: true,
+      touchControls: true,
+      gyroControls: false,
+      minHeight: 200.00,
+      minWidth: 200.00,
+      scale: 1.00,
+      scaleMobile: 1.00,
+      color: 0x3f8eff,
+      backgroundColor: 0x121222,
+      points: 12.00,
+      maxDistance: 25.00,
+      spacing: 18.00
+    })
+    </script>
+
+</body>
+</html>
